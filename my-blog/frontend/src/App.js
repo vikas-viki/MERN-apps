@@ -5,6 +5,8 @@ import Navbar from './Components/Navbar';
 import './App.css';
 import About from './Pages/About';
 import NotFound from './Pages/Notfound';
+import Article from './Pages/Article';
+import ArticlesList from './Pages/ArticlesList';
 
 function App() {
   return (
@@ -13,7 +15,9 @@ function App() {
       <div className='max-w-screen-md mx-auto pt-20'>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/about' element={<About />} />
+          <Route path='/about' element={<About />} />          
+          <Route path='/articles-list' element={<ArticlesList />} /> 
+          <Route path='/article/:name' element={<Article />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </div>
