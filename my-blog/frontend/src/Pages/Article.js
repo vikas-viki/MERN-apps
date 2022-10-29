@@ -1,42 +1,54 @@
-// import "whatwg-fetch";
-// import React, {useState,useEffect} from "react";
-// import { useParams } from "react-router-dom";
-// import Articles from "../Components/Articles";
-// import articles from "./article-content";
+import "whatwg-fetch";
+import React, {useState, useEffect} from "react";
+import { useParams } from "react-router-dom";
+import articles from "./article-content";
+import Articles from "../Components/Articles";
+import { CommentsList } from "../Components/CommentsList";
+import  Commentform  from "../Components/Commentform";
 
 
-// const Article = () => {
-//     const name = useParams();
-//     const article = articles.find(article => article.name === name);
+const Article = () => {
+    const name = useParams();
+    const article = articles.find((article) => article.name === name.name);
+    
+    const [articleInfo, setArticleInfo] = useState({ comments: [] });
 
-//     const [articleInfo, setArticleInfo] = useState({comments: []});
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await fetch(`http://localhost:8000/api/articles/${name.name}`);
+            const body = await result.json();
+            // console.log(body);
+            setArticleInfo(body);
+        };
+        fetchData();
+    });
+    
+    
+    if(!article) return <h1>Article does not exist</h1>;
+    const otherArticles = articles.filter((article) => article.name !== name.name);
 
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             const result = await fetch(`/api/articles/${name}`);
-//             const body = await result.json();
-//             setArticleInfo(body);
-//         }
-//         fetchData();
-//     }, [name.name]);
-
-//     if (!article) return <h1>Article does not exist!</h1>
-//     const otherArticles = articles.filter(article => article.name !== name.name);
-
-//     return (
-//         <div className="mb-20">
-//             <h1 className="sm:text-4xl text-2xl font-bold mt-6 mb-6 text-gray-900">{article.title}</h1>
-//             {article.content.map((paragraph, index) => 
-//                 <p className="mb-4" key={index}>{paragraph}</p>
-//             )}
+  return (
+    <div className="mb-20">
+      <h1 className="sm:text-4xl text-2xl font-bold mt-6 text-gray-900">
+      {article.title}
+      </h1>
+      {article.content.map((paragraph, index) =>
+        <p className="mx-auto leading-relaxed text-base mb-4" key={index}>
+            {paragraph}
+        </p>
+      )}
+      <CommentsList comments={articleInfo.comments} />
+      <Commentform articleName={name} setArticleInfo={setArticleInfo} />
 
 
-//             <h1 className="sm:text-2x text-xl font-bold mt-6 mb-6 text-gray-900">Other Articles:</h1>
-//             <div className="flex flex-wrap -m-4">
-//             <Articles articles={otherArticles} />
-//             </div>
-//         </div>
-//     );
-// }
+      <h1 className="sm:text-2x text-xl font-bold mt-4 mb-4 text-gray-900">
+        Other Articles:
+      </h1>
+      <div className="flex flex-wrap -m-4">
+        <Articles articles={otherArticles} />
+      </div>
+    </div>
+  );
+};
 
-// export default Article;
+export default Article;

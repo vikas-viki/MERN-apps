@@ -3,8 +3,9 @@ import { useState } from "react";
 
 const NoteState = (props) => {
   const host = "http://localhost:5000"
-  const notesInitial = []
-  const [notes, setNotes] = useState(notesInitial)
+  const notesInitial = [];
+  const [notes, setNotes] = useState(notesInitial);
+  const [filteredNote, setFilteredNote] = useState([]);
 
   // Get all Notes
   const getNotes = async () => {
@@ -18,6 +19,17 @@ const NoteState = (props) => {
     });
     const json = await response.json() 
     setNotes(json)
+  }
+  const getSpecificNotes = async(name) =>{
+    const response = await fetch(`${host}/api/notes/${name}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        "auth-token": localStorage.getItem("token")
+      }
+    });
+    const json = await response.json()
+    setNotes(json);
   }
 
   // Add a Note
@@ -80,7 +92,7 @@ const NoteState = (props) => {
   }
 
   return (
-    <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote, getNotes }}>
+    <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote, getNotes, getSpecificNotes, filteredNote }}>
       {props.children}
     </NoteContext.Provider>
   )

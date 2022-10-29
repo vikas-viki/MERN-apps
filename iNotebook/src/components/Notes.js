@@ -8,7 +8,7 @@ import "../Styles/Notes.css"
 const Notes = (props) => {
     const history = useHistory();
     const context = useContext(noteContext);
-    const { notes, getNotes, editNote } = context;
+    const { notes, getNotes, editNote, getSpecificNotes } = context;
     useEffect(() => {
         if (localStorage.getItem('token')) {
             getNotes()
@@ -19,7 +19,8 @@ const Notes = (props) => {
     }, [])
     const ref = useRef(null)
     const refClose = useRef(null)
-    const [note, setNote] = useState({ id: "", etitle: "", edescription: "", etag: "" })
+    const [note, setNote] = useState({ id: "", etitle: "", edescription: "", etag: "" });
+    const [searchText, setSearchText] = useState("")
 
     const updateNote = (currentNote) => {
         ref.current.click();
@@ -36,6 +37,9 @@ const Notes = (props) => {
         setNote({ ...note, [e.target.name]: e.target.value })
     }
 
+    const searchByFilter = () => {
+        getSpecificNotes(searchText);
+    }
     return (
         <>
             <AddNote showMsg={props.showMsg} />
@@ -52,7 +56,7 @@ const Notes = (props) => {
                         <div className="modal-body pt-0">
                             <form className="my-3">
                                 <div className="mb-3">
-                                    <textarea style={{ width: "100%", border: "none", background: "none", fontSize: "18px" }}  id="edescription" rows={20} name="edescription" value={note.edescription} onChange={onChange} minLength={5} required />
+                                    <textarea style={{ width: "100%", border: "none", background: "none", fontSize: "18px" }} id="edescription" rows={20} name="edescription" value={note.edescription} onChange={onChange} minLength={5} required />
                                 </div>
                             </form>
                         </div>
@@ -65,7 +69,23 @@ const Notes = (props) => {
             </div>
 
             <div className="row my-3">
-                <h2>You Notes</h2>
+                <div className='d-flex justify-content-between pb-3'>
+                    <h2>You Notes</h2>
+                    <div className='d-flex flex-row'>
+                        <form className='d-flex' onSubmit={(e) => { searchByFilter(); e.preventDefault(); }}>
+                            <input
+                                type="text"
+                                className='form-control mx-3'
+                                placeholder='Search note by title'
+                                value={searchText}
+                                onChange={(e) => {
+                                    setSearchText(e.target.value)
+                                }} />
+                            <button type="submit" className=' btn btn-secondary'>Search</button>
+                        </form>
+                    </div>
+                </div>
+                <hr />
                 <div className="container mx-2">
                     {notes.length === 0 && 'No notes to display'}
                 </div>
